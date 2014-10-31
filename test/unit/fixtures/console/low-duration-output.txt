@@ -1,0 +1,2 @@
+mochaIstanbul:coverage  1754 ms  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 75%
+Total 2333 ms

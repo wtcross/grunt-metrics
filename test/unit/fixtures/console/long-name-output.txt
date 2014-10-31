@@ -1,0 +1,8 @@
+loading tasks                      3 ms  0%
+super super su...y really long     9 ms  0%
+clean:1                            3 ms  0%
+jshint:src                       146 ms  ▇▇ 6%
+jshint:test                      205 ms  ▇▇▇ 9%
+jscs:src                         213 ms  ▇▇▇ 9%
+mochaIstanbul:coverage          1754 ms  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 75%
+Total 2333 ms

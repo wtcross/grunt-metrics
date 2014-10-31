@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- '0.10'
+deploy:
+  provider: npm
+  email: tcross@bandwidth.com
+  on:
+    repo: wtcross/grunt-metrics
+    branch: master
+  api_key:
+    secure: ruYXjvANPfBEehsgJGGmFHDbH/G62p7CaNIYyL8j9oLBYCGne/tXuKnDHdXl7WxKtQPcHsNEG/sHE8kFmDxVpmsoMj+oHxqc+a/c8vCkMjlJ/7BQmWgb3k7HHVJD13oyeQvgMTofXJ+TXXiNWvBJVQOD/QfsI6PpjFR4+Uyb9n4=

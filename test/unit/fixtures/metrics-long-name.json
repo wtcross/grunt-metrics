@@ -1,0 +1,49 @@
+  {
+    "travis": {},
+    "git": {
+      "commit": "47110f8741892f3a16b91b5483c752814b6d7043",
+      "author": {
+        "name": "Tyler Cross",
+        "email": "tyler@crosscollab.com"
+      }
+    },
+    "npm": {
+      "name": "grunt-metrics",
+      "version": "0.1.0"
+    },
+    "grunt": {
+      "start": "2014-10-30T13:22:06.860Z",
+      "end": "2014-10-30T13:22:09.193Z",
+      "duration": 2333,
+      "tasks": [
+        {
+          "name": "loading tasks",
+          "duration": 3
+        },
+        {
+          "name": "super super super long task name that is truncated because it is really really long",
+          "duration": 9
+        },
+        {
+          "name": "clean:1",
+          "duration": 3
+        },
+        {
+          "name": "jshint:src",
+          "duration": 146
+        },
+        {
+          "name": "jshint:test",
+          "duration": 205
+        },
+        {
+          "name": "jscs:src",
+          "duration": 213
+        },
+        {
+          "name": "mochaIstanbul:coverage",
+          "duration": 1754
+        }
+      ]
+    }
+  }

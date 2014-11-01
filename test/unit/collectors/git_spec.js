@@ -4,7 +4,7 @@ var sinon  = require("sinon");
 var shell = require("shelljs");
 var fs = require("fs");
 
-var git = require("../../../tasks/collectors/git");
+var git = require("../../../lib/collectors/git");
 
 describe("The grunt-metrics plugin git collector", function () {
 	it("has a name", function () {
@@ -33,10 +33,8 @@ describe("The grunt-metrics plugin git collector", function () {
 			var options = {
 				silent : true
 			};
-			var author = {
-				name  : "Tester",
-				email : "tester@testing.com"
-			};
+			var authorName = "Tester";
+			var authorEmail = "tester@testing.com";
 			var commit = "COMMIT";
 
 			before(function () {
@@ -47,11 +45,13 @@ describe("The grunt-metrics plugin git collector", function () {
 				exec.withArgs("git rev-parse --verify HEAD", options).returns({
 					output : commit
 				});
+
 				exec.withArgs("git --no-pager show -s --format='%an' HEAD", options).returns({
-					output : author.name
+					output : authorName
 				});
+
 				exec.withArgs("git --no-pager show -s --format='%ae' HEAD", options).returns({
-					output : author.email
+					output : authorEmail
 				});
 
 				result = git(config);
@@ -68,8 +68,9 @@ describe("The grunt-metrics plugin git collector", function () {
 
 			it("returns metrics", function () {
 				expect(result.data).to.deep.equal({
-					author : author,
-					commit : commit
+					"author-name"  : authorName,
+					"author-email" : authorEmail,
+					commit         : commit
 				});
 			});
 		});

@@ -3,7 +3,7 @@ var expect = require("chai").expect;
 var fs     = require("fs");
 var sinon  = require("sinon");
 
-var npm = require("../../../tasks/collectors/npm");
+var npm = require("../../../lib/collectors/npm");
 
 describe("The grunt-metrics plugin npm collector", function () {
 	it("has a name", function () {

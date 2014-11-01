@@ -27,7 +27,7 @@ Collectors gather information at Grunt run time. The current collectors are:
 
 A collector has the following signature:
 
-#### function [collectorName] (config) { }
+#### function collectorName (config) { }
 
 | parameter | description                        |
 |-----------|------------------------------------|
@@ -51,7 +51,7 @@ Reporters do something with the final metrics gathered by all collectors. The cu
 
 A reporter has the following signature:
 
-#### function [reporterName] (config, metrics) { }
+#### function reporterName (config, metrics) { }
 
 | parameter | description                        |
 |-----------|------------------------------------|

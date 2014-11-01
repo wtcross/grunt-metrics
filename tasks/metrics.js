@@ -81,7 +81,12 @@ module.exports = function (grunt) {
 			return Q.all(
 				_.map(reporters, function (reporter) {
 					var reporterConfig = config.reporters[reporter.name];
-					reporter(reporterConfig, metrics);
+					try {
+						reporter(reporterConfig, metrics);
+					}
+					catch (ex) {
+
+					}
 				})
 			);
 		})

@@ -2,7 +2,7 @@
 var expect      = require("chai").expect;
 var Environment = require("apparition").Environment;
 
-var travis = require("../../../tasks/collectors/travis");
+var travis = require("../../../lib/collectors/travis");
 
 describe("The grunt-metrics plugin travis collector", function () {
 	it("has a name", function () {

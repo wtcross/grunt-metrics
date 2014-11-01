@@ -58,8 +58,8 @@ describe("The grunt-metrics plugin", function () {
 		reporter.func.returns(new Q());
 
 		metrics = proxyquire("../../tasks/metrics", {
-			"./collectors" : [ collector.func ],
-			"./reporters"  : [ reporter.func ]
+			"../lib/collectors" : [ collector.func ],
+			"../lib/reporters"  : [ reporter.func ]
 		});
 
 		plugin = metrics(grunt);

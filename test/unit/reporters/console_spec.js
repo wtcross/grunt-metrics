@@ -4,10 +4,10 @@ var sinon      = require("sinon");
 var Q          = require("q");
 var stripColor = require("stripcolorcodes");
 
-var consoleReporter = require("../../../tasks/reporters/console");
+var consoleReporter = require("../../../lib/reporters/console");
 var fixture         = require("../helpers/fixture");
-var util            = require("../helpers/util");
-var setValue        = util.setValue;
+var utilities       = require("../helpers/utilities");
+var setValue        = utilities.setValue;
 
 describe("The grunt-metrics plugin console reporter", function () {
 	var log;

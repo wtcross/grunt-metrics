@@ -7,8 +7,8 @@
  */
 
 "use strict";
-var collectors = require("./collectors");
-var reporters  = require("./reporters");
+var collectors = require("../lib/collectors");
+var reporters  = require("../lib/reporters");
 
 var hooker = require("hooker");
 var moment = require("moment");

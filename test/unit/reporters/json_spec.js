@@ -4,7 +4,7 @@ var fs      = require("fs");
 var sinon   = require("sinon");
 var path    = require("path");
 
-var json    = require("../../../tasks/reporters/json");
+var json    = require("../../../lib/reporters/json");
 var fixture = require("../helpers/fixture");
 
 describe("The grunt-metrics plugin json reporter", function () {

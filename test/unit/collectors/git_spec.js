@@ -62,16 +62,16 @@ describe("The grunt-metrics plugin git collector", function () {
 				exec.restore();
 			});
 
-			it("returns the correct series name", function () {
-				expect(result.series).to.equal("git");
+			it("returns the correct series", function () {
+				expect(result).to.have.property("git");
 			});
 
 			it("returns metrics", function () {
-				expect(result.data).to.deep.equal({
+				expect(result.git).to.deep.equal([ {
 					"author-name"  : authorName,
 					"author-email" : authorEmail,
 					commit         : commit
-				});
+				} ]);
 			});
 		});
 
@@ -93,12 +93,12 @@ describe("The grunt-metrics plugin git collector", function () {
 				existsSync.restore();
 			});
 
-			it("returns the correct series name", function () {
-				expect(result.series).to.equal("git");
+			it("returns the correct series", function () {
+				expect(result).to.have.property("git");
 			});
 
 			it("returns no metrics", function () {
-				expect(result.data).to.be.empty;
+				expect(result.git).to.be.empty;
 			});
 		});
 	});
@@ -124,12 +124,12 @@ describe("The grunt-metrics plugin git collector", function () {
 			existsSync.restore();
 		});
 
-		it("returns the correct series name", function () {
-			expect(result.series).to.equal("git");
+		it("returns the correct series", function () {
+			expect(result).to.have.property("git");
 		});
 
 		it("returns no metrics", function () {
-			expect(result.data).to.be.empty;
+			expect(result.git).to.be.empty;
 		});
 	});
 });

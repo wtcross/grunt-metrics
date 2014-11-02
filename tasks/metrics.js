@@ -18,17 +18,13 @@ var _      = require("lodash");
 module.exports = function (grunt) {
 	var startTime    = moment();
 	var endTime      = startTime;
+	var taskCount    = 0;
 
 	var prevTaskName = "loading tasks";
 
-	var result = {
-		series : "grunt",
-		data   : {
-			start    : startTime,
-			end      : null,
-			duration : null,
-			tasks    : []
-		}
+	var series = {
+		build : [],
+		tasks : []
 	};
 
 	hooker.hook(grunt.log, "header", function () {
@@ -38,14 +34,17 @@ module.exports = function (grunt) {
 		var name = grunt.task.current.nameArgs;
 
 		if (prevTaskName && prevTaskName !== name) {
-			result.data.tasks.push({
-				name     : prevTaskName,
-				duration : moment.duration(duration).as("milliseconds")
+			series.tasks.push({
+				name              : prevTaskName,
+				duration          : moment.duration(duration).as("milliseconds"),
+				"sequence_number" : taskCount,
+				time              : endTime.valueOf()
 			});
 		}
 
-		endTime = now;
+		endTime      = now;
 		prevTaskName = name;
+		taskCount    = taskCount + 1;
 	});
 
 	grunt.registerTask("metrics", "Report metrics gathered during task execution.", function () {
@@ -60,33 +59,37 @@ module.exports = function (grunt) {
 
 		var config = _.extend(defaults, grunt.config.get("metrics"));
 
-		var now              = moment();
-		result.data.end      = now;
-		result.data.duration = moment.duration(result.data.end.diff(result.data.start)).as("milliseconds");
+		var now = moment();
+		var end = now;
+		var start = startTime;
+
+		series.build.push({
+			time     : start.valueOf(),
+			start    : start.valueOf(),
+			end      : end.valueOf(),
+			tasks    : taskCount - 1,
+			duration : moment.duration(end.diff(start)).as("milliseconds")
+		});
 
 		return Q.all(
 			_.map(collectors, function (collector) {
 				var collectorConfig = config.collectors[collector.name];
-				return collector(collectorConfig);
+				try {
+					return collector(collectorConfig);
+				}
+				catch (ex) {
+					grunt.log.error(ex.message);
+					return {};
+				}
 			})
 		)
 		.then(function (results) {
-			results.push(result);
-
-			var metrics = _.reduce(results, function (acc, result) {
-				acc[result.series] = result.data;
-				return acc;
-			}, {});
+			series = _.merge.bind(null, series).apply(null, results);
 
 			return Q.all(
 				_.map(reporters, function (reporter) {
 					var reporterConfig = config.reporters[reporter.name];
-					try {
-						reporter(reporterConfig, metrics);
-					}
-					catch (ex) {
-
-					}
+					return reporter(reporterConfig, series);
 				})
 			);
 		})

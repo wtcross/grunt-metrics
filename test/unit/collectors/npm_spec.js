@@ -38,16 +38,20 @@ describe("The grunt-metrics plugin npm collector", function () {
 			readFileSync.reset();
 		});
 
-		it("returns the correct series name", function () {
-			expect(result.series).to.equal("npm");
+		it("returns the correct series", function () {
+			expect(result).to.have.property("npm");
+		});
+
+		it("returns just one point", function () {
+			expect(result.npm.length).to.equal(1);
 		});
 
 		it("returns the correct package name", function () {
-			expect(result.data.name).to.equal(pkg.name);
+			expect(result.npm[0].name).to.equal(pkg.name);
 		});
 
 		it("returns the correct package version", function () {
-			expect(result.data.version).to.equal(pkg.version);
+			expect(result.npm[0].version).to.equal(pkg.version);
 		});
 	});
 
@@ -68,12 +72,16 @@ describe("The grunt-metrics plugin npm collector", function () {
 			readFileSync.reset();
 		});
 
-		it("returns the correct series name", function () {
-			expect(result.series).to.equal("npm");
+		it("returns the correct series", function () {
+			expect(result).to.have.property("npm");
+		});
+
+		it("returns just one point", function () {
+			expect(result.npm.length).to.equal(1);
 		});
 
 		it("returns the correct package name", function () {
-			expect(result.data.name).to.equal(pkg.name);
+			expect(result.npm[0].name).to.equal(pkg.name);
 		});
 	});
 });

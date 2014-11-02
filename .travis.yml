@@ -9,3 +9,9 @@ deploy:
     branch: master
   api_key:
     secure: ruYXjvANPfBEehsgJGGmFHDbH/G62p7CaNIYyL8j9oLBYCGne/tXuKnDHdXl7WxKtQPcHsNEG/sHE8kFmDxVpmsoMj+oHxqc+a/c8vCkMjlJ/7BQmWgb3k7HHVJD13oyeQvgMTofXJ+TXXiNWvBJVQOD/QfsI6PpjFR4+Uyb9n4=
+env:
+  global:
+    - secure: KpmcbiNbZXc+RA+pPB+R+m/8ZLTfdR/1ziu6cXlpbUTGCSvOgHoV+4xYsPN3XbRNd0Hx87pTaJqoLhbaX4uyhiPhrKviHFAYnGXW7ryuqAbmo9mlo+Sq1OYY8ee0tAPI/ckANlVcZMGaObi3opA4DM7SiDrYg9wQlqbEd+47PEA=
+    - DEMO_METRICS_DB_USER="demo"
+    - DEMO_METRICS_DB_NAME="demo"
+    - DEMO_METRICS_DB_HOST="metrics-demo.bwincubator.com"

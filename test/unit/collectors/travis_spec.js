@@ -65,12 +65,12 @@ describe("The grunt-metrics plugin travis collector", function () {
 				environment.delete("TRAVIS_TAG");
 			});
 
-			it("returns the correct series name", function () {
-				expect(result.series).to.equal("travis");
+			it("returns the correct series", function () {
+				expect(result).to.have.property("travis");
 			});
 
-			it("returns correct metrics", function () {
-				expect(result.data).to.deep.equal({
+			it("returns correct point", function () {
+				expect(result.travis).to.deep.equal([ {
 					"branch"       : branch,
 					"commit"       : commit,
 					"commit-range" : range,
@@ -79,7 +79,7 @@ describe("The grunt-metrics plugin travis collector", function () {
 					"pull-request" : pr,
 					"repo-slug"    : repo,
 					"tag"          : tag
-				});
+				} ]);
 			});
 		});
 
@@ -111,18 +111,18 @@ describe("The grunt-metrics plugin travis collector", function () {
 				environment.delete("TRAVIS_JOB_NUMBER");
 			});
 
-			it("returns the correct series name", function () {
-				expect(result.series).to.equal("travis");
+			it("returns the correct series", function () {
+				expect(result).to.have.property("travis");
 			});
 
-			it("returns correct metrics", function () {
-				expect(result.data).to.deep.equal({
+			it("returns correct point", function () {
+				expect(result.travis).to.deep.equal([ {
 					"branch"       : branch,
 					"commit"       : commit,
 					"commit-range" : range,
 					"job-id"       : jobId,
 					"job-number"   : jobNum
-				});
+				} ]);
 			});
 		});
 	});
@@ -141,12 +141,12 @@ describe("The grunt-metrics plugin travis collector", function () {
 			environment.restore();
 		});
 
-		it("returns the correct series name", function () {
-			expect(result.series).to.equal("travis");
+		it("returns the correct series", function () {
+			expect(result).to.have.property("travis");
 		});
 
-		it("returns no metrics", function () {
-			expect(result.data).to.be.empty;
+		it("returns no points", function () {
+			expect(result.travis).to.be.empty;
 		});
 	});
 });

@@ -1,29 +1,38 @@
 {
-  "travis": {},
-  "git": {
-    "commit": "47110f8741892f3a16b91b5483c752814b6d7043",
-    "author": {
-      "name": "Tyler Cross",
-      "email": "tyler@crosscollab.com"
+  "build": [
+    {
+      "time": 1414945924699,
+      "end": 1414945926458,
+      "tasks": 2,
+      "duration": 2208
     }
-  },
-  "npm": {
-    "name": "grunt-metrics",
-    "version": "0.1.0"
-  },
-  "grunt": {
-    "start": "2014-10-30T13:22:06.860Z",
-    "end": "2014-10-30T13:22:09.193Z",
-    "duration": 2333,
-    "tasks": [
-      {
-        "name": "jscs:src",
-        "duration": 1
-      },
-      {
-        "name": "mochaIstanbul:coverage",
-        "duration": 1754
-      }
-    ]
-  }
+  ],
+  "tasks": [
+    {
+      "name": "jscs:src",
+      "duration": 1,
+      "sequence_number": 1,
+      "time": 1414945924699
+    },
+    {
+      "name": "test",
+      "duration": 1758,
+      "sequence_number": 2,
+      "time": 1414945924700
+    }
+  ],
+  "travis": [],
+  "git": [
+    {
+      "commit": "dc1ae130fb8ae17f8d7a2b0a2af52fc870e3fe18",
+      "author-name": "Tyler Cross",
+      "author-email": "tyler@crosscollab.com"
+    }
+  ],
+  "npm": [
+    {
+      "name": "grunt-metrics",
+      "version": "0.2.1"
+    }
+  ]
 }

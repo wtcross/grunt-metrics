@@ -57,6 +57,17 @@ module.exports = function (grunt) {
 					recursive : true
 				}
 			}
+		},
+
+		metrics : {
+			reporters : {
+				influx : {
+					username : process.env.DEMO_METRICS_DB_USER,
+					password : process.env.DEMO_METRICS_DB_PASSWORD,
+					database : process.env.DEMO_METRICS_DB_NAME,
+					host     : process.env.DEMO_METRICS_DB_HOST
+				}
+			}
 		}
 	});
 

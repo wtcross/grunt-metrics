@@ -13,6 +13,7 @@ describe("The grunt-metrics plugin", function () {
 	var hook;
 	var registerTask;
 	var header;
+	var error;
 
 	var metrics;
 
@@ -32,13 +33,15 @@ describe("The grunt-metrics plugin", function () {
 
 	before(function () {
 		registerTask = sinon.stub();
-		header = sinon.stub();
+		header       = sinon.stub();
+		error        = sinon.stub();
 
 		grunt = {
 			registerTask : registerTask,
 
 			log : {
-				header : header
+				header : header,
+				error  : error
 			},
 
 			task : {
@@ -49,13 +52,6 @@ describe("The grunt-metrics plugin", function () {
 		};
 
 		hook = sinon.stub(hooker, "hook");
-
-		collector.func.returns({
-			series : "test",
-			data   : {}
-		});
-
-		reporter.func.returns(new Q());
 
 		metrics = proxyquire("../../tasks/metrics", {
 			"../lib/collectors" : [ collector.func ],
@@ -102,20 +98,28 @@ describe("The grunt-metrics plugin", function () {
 
 			var tasks = [
 				{
-					name     : "loading tasks",
-					duration : 3
+					name              : "loading tasks",
+					duration          : 3,
+					"sequence_number" : 1,
+					time              : 0
 				},
 				{
-					name     : "task a",
-					duration : 200
+					name              : "task a",
+					duration          : 200,
+					"sequence_number" : 2,
+					time              : 3
 				},
 				{
-					name     : "task b",
-					duration : 300
+					name              : "task b",
+					duration          : 300,
+					"sequence_number" : 3,
+					time              : 203
 				},
 				{
-					name     : "task c",
-					duration : 1200
+					name              : "task c",
+					duration          : 1200,
+					"sequence_number" : 4,
+					time              : 503
 				}
 			];
 
@@ -135,6 +139,12 @@ describe("The grunt-metrics plugin", function () {
 				grunt.config = {
 					get : get
 				};
+
+				collector.func.returns({
+					test : {}
+				});
+
+				reporter.func.returns(new Q());
 
 				function runTask (task) {
 					var wrapper = hook.firstCall.args[2];
@@ -159,8 +169,11 @@ describe("The grunt-metrics plugin", function () {
 			});
 
 			after(function () {
+				unhook.reset();
 				collector.func.reset();
 				reporter.func.reset();
+				grunt.log.header.reset();
+				grunt.log.error.reset();
 				clock.restore();
 			});
 
@@ -196,17 +209,21 @@ describe("The grunt-metrics plugin", function () {
 					gatheredMetrics = reporter.func.firstCall.args[1];
 				});
 
-				it("has grunt task metrics", function () {
-					expect(gatheredMetrics, "no grunt metrics").to.have.property("grunt");
+				it("has build metrics", function () {
+					expect(gatheredMetrics, "no grunt metrics").to.have.property("build");
+				});
+
+				it("has task metrics", function () {
+					expect(gatheredMetrics, "no grunt metrics").to.have.property("tasks");
 				});
 
 				describe("grunt task metrics", function () {
 					it("has the correct number of tasks recorded", function () {
-						expect(gatheredMetrics.grunt.tasks.length, "wrong number of tasks").to.equal(4);
+						expect(gatheredMetrics.tasks.length, "wrong number of tasks").to.equal(4);
 					});
 
 					it("has the correct data for each task", function () {
-						expect(gatheredMetrics.grunt.tasks, "didn't record tasks correctly").to.deep.equal(tasks);
+						expect(gatheredMetrics.tasks, "didn't record tasks correctly").to.deep.equal(tasks);
 					});
 				});
 			});

@@ -68,7 +68,8 @@ module.exports = function (grunt) {
 			start    : start.valueOf(),
 			end      : end.valueOf(),
 			tasks    : taskCount - 1,
-			duration : moment.duration(end.diff(start)).as("milliseconds")
+			duration : moment.duration(end.diff(start)).as("milliseconds"),
+			ci       : process.env.CI ? true : false
 		});
 
 		return Q.all(

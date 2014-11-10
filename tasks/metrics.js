@@ -18,17 +18,13 @@ var _      = require("lodash");
 module.exports = function (grunt) {
 	var startTime    = moment();
 	var endTime      = startTime;
+	var taskCount    = 0;
 
 	var prevTaskName = "loading tasks";
 
-	var result = {
-		series : "grunt",
-		data   : {
-			start    : startTime,
-			end      : null,
-			duration : null,
-			tasks    : []
-		}
+	var series = {
+		build : [],
+		tasks : []
 	};
 
 	hooker.hook(grunt.log, "header", function () {
@@ -38,14 +34,17 @@ module.exports = function (grunt) {
 		var name = grunt.task.current.nameArgs;
 
 		if (prevTaskName && prevTaskName !== name) {
-			result.data.tasks.push({
-				name     : prevTaskName,
-				duration : moment.duration(duration).as("milliseconds")
+			series.tasks.push({
+				name              : prevTaskName,
+				duration          : moment.duration(duration).as("milliseconds"),
+				"sequence_number" : taskCount,
+				time              : endTime.valueOf()
 			});
 		}
 
-		endTime = now;
+		endTime      = now;
 		prevTaskName = name;
+		taskCount    = taskCount + 1;
 	});
 
 	grunt.registerTask("metrics", "Report metrics gathered during task execution.", function () {
@@ -60,30 +59,47 @@ module.exports = function (grunt) {
 
 		var config = _.extend(defaults, grunt.config.get("metrics"));
 
-		var now              = moment();
-		result.data.end      = now;
-		result.data.duration = moment.duration(result.data.end.diff(result.data.start)).as("milliseconds");
+		var now = moment();
+		var end = now;
+		var start = startTime;
 
-		return Q.all(
+		series.build.push({
+			time     : start.valueOf(),
+			start    : start.valueOf(),
+			end      : end.valueOf(),
+			tasks    : taskCount - 1,
+			duration : moment.duration(end.diff(start)).as("milliseconds")
+		});
+
+		return Q.allSettled(
 			_.map(collectors, function (collector) {
 				var collectorConfig = config.collectors[collector.name];
 				return collector(collectorConfig);
 			})
 		)
 		.then(function (results) {
-			results.push(result);
+			_.forEach(results, function (result) {
+				if (result.state === "fulfilled") {
+					_.merge(series, result.value);
+				}
+				else {
+					grunt.log.error(result.reason.message);
+				}
+			});
 
-			var metrics = _.reduce(results, function (acc, result) {
-				acc[result.series] = result.data;
-				return acc;
-			}, {});
-
-			return Q.all(
+			return Q.allSettled(
 				_.map(reporters, function (reporter) {
 					var reporterConfig = config.reporters[reporter.name];
-					reporter(reporterConfig, metrics);
+					return reporter(reporterConfig, series);
 				})
-			);
+			)
+			.then(function (results) {
+				_.forEach(results, function (result) {
+					if (result.state !== "fulfilled") {
+						grunt.log.error(result.reason.message);
+					}
+				});
+			});
 		})
 		.nodeify(done);
 	});

@@ -5,14 +5,18 @@ var hooker     = require("hooker");
 var proxyquire = require("proxyquire").noCallThru();
 var Q          = require("q");
 
+var createError = require("../../lib/error");
+
 describe("The grunt-metrics plugin", function () {
 	var plugin;
 	var grunt;
 	var task;
 
 	var hook;
+	var unhook;
 	var registerTask;
 	var header;
+	var error;
 
 	var metrics;
 
@@ -32,13 +36,15 @@ describe("The grunt-metrics plugin", function () {
 
 	before(function () {
 		registerTask = sinon.stub();
-		header = sinon.stub();
+		header       = sinon.stub();
+		error        = sinon.stub();
 
 		grunt = {
 			registerTask : registerTask,
 
 			log : {
-				header : header
+				header : header,
+				error  : error
 			},
 
 			task : {
@@ -49,13 +55,7 @@ describe("The grunt-metrics plugin", function () {
 		};
 
 		hook = sinon.stub(hooker, "hook");
-
-		collector.func.returns({
-			series : "test",
-			data   : {}
-		});
-
-		reporter.func.returns(new Q());
+		unhook = sinon.stub(hooker, "unhook");
 
 		metrics = proxyquire("../../tasks/metrics", {
 			"../lib/collectors" : [ collector.func ],
@@ -91,7 +91,6 @@ describe("The grunt-metrics plugin", function () {
 		describe("timing multiple tasks being ran", function () {
 			var clock;
 			var async;
-			var unhook;
 			var get;
 			var done;
 
@@ -102,20 +101,28 @@ describe("The grunt-metrics plugin", function () {
 
 			var tasks = [
 				{
-					name     : "loading tasks",
-					duration : 3
+					name              : "loading tasks",
+					duration          : 3,
+					"sequence_number" : 1,
+					time              : 0
 				},
 				{
-					name     : "task a",
-					duration : 200
+					name              : "task a",
+					duration          : 200,
+					"sequence_number" : 2,
+					time              : 3
 				},
 				{
-					name     : "task b",
-					duration : 300
+					name              : "task b",
+					duration          : 300,
+					"sequence_number" : 3,
+					time              : 203
 				},
 				{
-					name     : "task c",
-					duration : 1200
+					name              : "task c",
+					duration          : 1200,
+					"sequence_number" : 4,
+					time              : 503
 				}
 			];
 
@@ -127,14 +134,21 @@ describe("The grunt-metrics plugin", function () {
 				async = sinon.stub();
 				async.returns(done);
 
-				unhook = sinon.stub(hooker, "unhook");
-
 				get = sinon.stub();
 				get.returns(config);
 
 				grunt.config = {
 					get : get
 				};
+
+				collector.func.returns({
+					test : {}
+				});
+
+				reporter.func.returns(new Q({
+					series : "test",
+					data   : {}
+				}));
 
 				function runTask (task) {
 					var wrapper = hook.firstCall.args[2];
@@ -159,8 +173,11 @@ describe("The grunt-metrics plugin", function () {
 			});
 
 			after(function () {
+				unhook.reset();
 				collector.func.reset();
 				reporter.func.reset();
+				grunt.log.header.reset();
+				grunt.log.error.reset();
 				clock.restore();
 			});
 
@@ -196,19 +213,123 @@ describe("The grunt-metrics plugin", function () {
 					gatheredMetrics = reporter.func.firstCall.args[1];
 				});
 
-				it("has grunt task metrics", function () {
-					expect(gatheredMetrics, "no grunt metrics").to.have.property("grunt");
+				it("has build metrics", function () {
+					expect(gatheredMetrics, "no grunt metrics").to.have.property("build");
+				});
+
+				it("has task metrics", function () {
+					expect(gatheredMetrics, "no grunt metrics").to.have.property("tasks");
 				});
 
 				describe("grunt task metrics", function () {
 					it("has the correct number of tasks recorded", function () {
-						expect(gatheredMetrics.grunt.tasks.length, "wrong number of tasks").to.equal(4);
+						expect(gatheredMetrics.tasks.length, "wrong number of tasks").to.equal(4);
 					});
 
 					it("has the correct data for each task", function () {
-						expect(gatheredMetrics.grunt.tasks, "didn't record tasks correctly").to.deep.equal(tasks);
+						expect(gatheredMetrics.tasks, "didn't record tasks correctly").to.deep.equal(tasks);
 					});
 				});
+			});
+		});
+
+		describe("with collector and reporter errors", function () {
+			var clock;
+			var async;
+			var get;
+			var done;
+
+			var config = {
+				reporters  : {},
+				collectors : {}
+			};
+
+			var tasks = [
+				{
+					name              : "loading tasks",
+					duration          : 3,
+					"sequence_number" : 1,
+					time              : 0
+				},
+				{
+					name              : "task a",
+					duration          : 200,
+					"sequence_number" : 2,
+					time              : 3
+				},
+				{
+					name              : "task b",
+					duration          : 300,
+					"sequence_number" : 3,
+					time              : 203
+				},
+				{
+					name              : "task c",
+					duration          : 1200,
+					"sequence_number" : 4,
+					time              : 503
+				}
+			];
+
+			var reporterError = createError("reporter", "test", "test message");
+			var collectorError = createError("collector", "test", "test message");
+
+			config.collectors[collector.func.name] = collector.config;
+			config.reporters[reporter.func.name] = reporter.config;
+
+			before(function () {
+				done = sinon.spy();
+				async = sinon.stub();
+				async.returns(done);
+
+				get = sinon.stub();
+				get.returns(config);
+
+				grunt.config = {
+					get : get
+				};
+
+				collector.func.returns(new Q.reject(collectorError));
+
+				reporter.func.returns(new Q.reject(reporterError));
+
+				function runTask (task) {
+					var wrapper = hook.firstCall.args[2];
+					grunt.task.current.nameArgs = task.name;
+					wrapper();
+					clock.tick(task.duration);
+				}
+
+				clock = sinon.useFakeTimers();
+
+				tasks.forEach(runTask);
+
+				// This would be recorded when the grunt-metrics task is ran below.
+				runTask({
+					name     : "metrics",
+					duration : 50
+				});
+
+				task.apply({
+					async : async
+				});
+			});
+
+			after(function () {
+				unhook.reset();
+				collector.func.reset();
+				reporter.func.reset();
+				grunt.log.header.reset();
+				grunt.log.error.reset();
+				clock.restore();
+			});
+
+			it("logs the error message from the collector", function () {
+				expect(grunt.log.error.calledWith(collectorError.message)).to.be.true;
+			});
+
+			it("logs the error message from the reporter", function () {
+				expect(grunt.log.error.calledWith(reporterError.message)).to.be.true;
 			});
 		});
 	});

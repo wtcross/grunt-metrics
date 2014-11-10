@@ -16,6 +16,7 @@ describe("The grunt-metrics plugin console reporter", function () {
 	var outputFixture;
 	var longNameOutputFixture;
 	var defaultColumnWidthOutputFixture;
+	var customConfigOutputFixture;
 	var columns;
 
 	before(function (done) {
@@ -27,14 +28,16 @@ describe("The grunt-metrics plugin console reporter", function () {
 			fixture("metrics-long-name.json"),
 			fixture("console/output.txt"),
 			fixture("console/long-name-output.txt"),
-			fixture("console/default-column-width-output.txt")
+			fixture("console/default-column-width-output.txt"),
+			fixture("console/custom-config-output.txt")
 		])
-		.spread(function (metrics, longNameMetrics, output, longNameOutput, defaultColumnWidthOutput) {
+		.spread(function (metrics, longNameMetrics, output, longNameOutput, defaultColumnWidthOutput, customConfigOutput) {
 			metricsFixture = metrics;
 			longNameMetricsFixture = longNameMetrics;
 			outputFixture = output;
 			longNameOutputFixture = longNameOutput;
 			defaultColumnWidthOutputFixture = defaultColumnWidthOutput;
+			customConfigOutputFixture = customConfigOutput;
 		})
 		.nodeify(done);
 	});
@@ -49,8 +52,12 @@ describe("The grunt-metrics plugin console reporter", function () {
 	});
 
 	describe("with default configuration", function () {
+		var config = {
+			enable : true
+		};
+
 		before(function (done) {
-			consoleReporter({}, metricsFixture).nodeify(done);
+			consoleReporter(config, metricsFixture).nodeify(done);
 		});
 
 		after(function () {
@@ -66,8 +73,9 @@ describe("The grunt-metrics plugin console reporter", function () {
 	describe("with custom configuration", function () {
 		var config = {
 			verbose   : false,
-			columns   : 80,
-			threshold : 0.01
+			columns   : 100,
+			threshold : 0.01,
+			enable    : true
 		};
 
 		before(function (done) {
@@ -77,11 +85,20 @@ describe("The grunt-metrics plugin console reporter", function () {
 		after(function () {
 			log.reset();
 		});
+
+		it("writes the report", function () {
+			expect(log.calledOnce, "not called").to.be.true;
+			expect(stripColor(log.firstCall.args[0]), "incorrect output").to.equal(customConfigOutputFixture);
+		});
 	});
 
 	describe("handling long task names", function () {
+		var config = {
+			enable : true
+		};
+
 		before(function (done) {
-			consoleReporter({}, longNameMetricsFixture).nodeify(done);
+			consoleReporter(config, longNameMetricsFixture).nodeify(done);
 		});
 
 		after(function () {
@@ -96,11 +113,14 @@ describe("The grunt-metrics plugin console reporter", function () {
 
 	describe("when process.stdout.columns is not set", function () {
 		var oldColumns;
+		var config = {
+			enable : true
+		};
 
 		before(function (done) {
 			oldColumns = setValue(process.stdout, "columns", 0);
 			process.stdout.columns = 0;
-			consoleReporter({}, metricsFixture).nodeify(done);
+			consoleReporter(config, metricsFixture).nodeify(done);
 		});
 
 		after(function () {

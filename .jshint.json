@@ -19,10 +19,10 @@
   "strict"        : true,
   "globalstrict"  : true,
   "trailing"      : true,
-  "maxparams"     : 5,
+  "maxparams"     : 6,
   "maxdepth"      : 3,
   "maxstatements" : false,
-  "maxlen"        : 120,
+  "maxlen"        : 150,
 
   "node"          : true,
 

@@ -1,0 +1,5 @@
+jshint:src       64 ms  ▇▇ 3%
+jshint:test     211 ms  ▇▇▇▇▇ 10%
+jscs:src        170 ms  ▇▇▇▇ 8%
+test           1758 ms  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 80%
+Total 2208 ms

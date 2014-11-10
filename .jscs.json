@@ -50,7 +50,7 @@
   ],
 
   "disallowImplicitTypeConversion" : [
-    "numeric", "boolean", "binary", "string"
+    "numeric", "binary", "string"
   ],
 
   "disallowKeywords" : [ "with" ],

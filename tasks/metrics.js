@@ -53,8 +53,16 @@ module.exports = function (grunt) {
 		var done = this.async();
 
 		var defaults = {
-			collectors : {},
-			reporters  : {}
+			collectors : {
+				git    : {},
+				npm    : {},
+				travis : {}
+			},
+			reporters  : {
+				console : {},
+				influx  : {},
+				json    : {}
+			}
 		};
 
 		var config = _.extend(defaults, grunt.config.get("metrics"));
@@ -89,10 +97,15 @@ module.exports = function (grunt) {
 			});
 
 			return Q.allSettled(
-				_.map(reporters, function (reporter) {
+				_.reduce(reporters, function (acc, reporter) {
 					var reporterConfig = config.reporters[reporter.name];
-					return reporter(reporterConfig, series);
-				})
+
+					if (reporterConfig.enable) {
+						acc.push(reporter(reporterConfig, series));
+					}
+
+					return acc;
+				}, [])
 			)
 			.then(function (results) {
 				_.forEach(results, function (result) {

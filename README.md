@@ -57,15 +57,16 @@ Configuration for a collector is looked up in ```metrics``` config using its nam
 
 ### Reporters
 
-Reporters do something with the final metrics gathered by all collectors. The current reporters and their options are:
+Reporters do something with the final metrics gathered by all collectors. Reporters need to be enabled individually. The current reporters and their options are:
 
 - *console*: write fancy bar chart to console
 
-    | option    | required | description                             |
-    |-----------|----------|-----------------------------------------|
-    | verbose   | false    | output everything                       |
-    | threshold | false    | minimum duration to report              |
-    | columns   | false    | number of columns the output should use |
+    | option    | default  | required | description                             |
+    |-----------|----------|----------|-----------------------------------------|
+    | enable    | false    | false    | enable this reporter                    |
+    | verbose   | false    | false    | output everything                       |
+    | threshold | 0.001    | false    | minimum duration to report              |
+    | columns   | 80       | false    | number of columns the output should use |
 
 - *json*: write metrics to a json file
 
@@ -75,13 +76,14 @@ Reporters do something with the final metrics gathered by all collectors. The cu
 
 - *influx*: write metrics to an InfluxDB database
 
-    | option    | required | description                             |
-    |-----------|----------|-----------------------------------------|
-    | username  | true     | database user                           |
-    | password  | true     | database user's password                |
-    | database  | true     | database to write series to             |
-    | host      | false    | hostname of the database                |
-    | port      | false    | port InfluxDB is listening on           |
+    | option    | default   | required | description                             |
+    |-----------|-----------|----------|-----------------------------------------|
+    | enable    | false     | false    | enable this reporter                    |
+    | username  |   n/a     | true     | database user                           |
+    | password  |   n/a     | true     | database user's password                |
+    | database  |   n/a     | true     | database to write series to             |
+    | host      | localhost | false    | hostname of the database                |
+    | port      | 8086      | false    | port InfluxDB is listening on           |
 
 A reporter has the following signature:
 

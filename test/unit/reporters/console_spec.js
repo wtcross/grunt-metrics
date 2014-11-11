@@ -52,9 +52,7 @@ describe("The grunt-metrics plugin console reporter", function () {
 	});
 
 	describe("with default configuration", function () {
-		var config = {
-			enable : true
-		};
+		var config = {};
 
 		before(function (done) {
 			consoleReporter(config, metricsFixture).nodeify(done);
@@ -74,8 +72,7 @@ describe("The grunt-metrics plugin console reporter", function () {
 		var config = {
 			verbose   : false,
 			columns   : 100,
-			threshold : 0.01,
-			enable    : true
+			threshold : 0.01
 		};
 
 		before(function (done) {
@@ -93,9 +90,7 @@ describe("The grunt-metrics plugin console reporter", function () {
 	});
 
 	describe("handling long task names", function () {
-		var config = {
-			enable : true
-		};
+		var config = {};
 
 		before(function (done) {
 			consoleReporter(config, longNameMetricsFixture).nodeify(done);
@@ -113,9 +108,7 @@ describe("The grunt-metrics plugin console reporter", function () {
 
 	describe("when process.stdout.columns is not set", function () {
 		var oldColumns;
-		var config = {
-			enable : true
-		};
+		var config = {};
 
 		before(function (done) {
 			oldColumns = setValue(process.stdout, "columns", 0);

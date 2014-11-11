@@ -18,12 +18,25 @@ grunt-metrics [![Build Status](https://travis-ci.org/wtcross/grunt-metrics.svg)]
 
 ### Collectors
 
-Collectors gather information at Grunt run time. The current collectors are:
+Collectors gather information at Grunt run time. The current collectors and their options are:
 
-- *grunt*: task duration recording
+- *build*: task duration recording
+
+    *no options*
+
 - *npm*: package information
+
+    | option | required | description            |
+    |--------|----------|------------------------|
+    | path   | false    | path to `package.json` |
+
 - *git*: git information
+
+    *no options*
+
 - *travis*: travis-ci environment variables
+
+    *no options*
 
 A collector has the following signature:
 
@@ -44,10 +57,31 @@ Configuration for a collector is looked up in ```metrics``` config using its nam
 
 ### Reporters
 
-Reporters do something with the final metrics gathered by all collectors. The current reporters are:
+Reporters do something with the final metrics gathered by all collectors. The current reporters and their options are:
 
 - *console*: write fancy bar chart to console
+
+    | option    | required | description                             |
+    |-----------|----------|-----------------------------------------|
+    | verbose   | false    | output everything                       |
+    | threshold | false    | minimum duration to report              |
+    | columns   | false    | number of columns the output should use |
+
 - *json*: write metrics to a json file
+
+    | option  | required | description                    |
+    |---------|----------|--------------------------------|
+    | path    | false    | path to write the json file to |
+
+- *influx*: write metrics to an InfluxDB database
+
+    | option    | required | description                             |
+    |-----------|----------|-----------------------------------------|
+    | username  | true     | database user                           |
+    | password  | true     | database user's password                |
+    | database  | true     | database to write series to             |
+    | host      | false    | hostname of the database                |
+    | port      | false    | port InfluxDB is listening on           |
 
 A reporter has the following signature:
 

@@ -57,6 +57,14 @@ module.exports = function (grunt) {
 					recursive : true
 				}
 			}
+		},
+
+		metrics : {
+			reporters : {
+				console : {
+					enable : true
+				}
+			}
 		}
 	});
 

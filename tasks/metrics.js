@@ -65,7 +65,7 @@ module.exports = function (grunt) {
 			}
 		};
 
-		var config = _.extend(defaults, grunt.config.get("metrics"));
+		var config = _.merge(defaults, grunt.config.get("metrics"));
 
 		var now = moment();
 		var end = now;

@@ -46,7 +46,7 @@
     "text-table": "^0.2.0"
   },
   "devDependencies": {
-    "apparition": "^0.1.1",
+    "apparition": "^0.2.0",
     "chai": "^1.9.2",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
